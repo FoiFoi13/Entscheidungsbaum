@@ -3,6 +3,31 @@ import sqljs from "sql.js"; // Import mit 'import'
 import express from 'express'; // Import mit 'import'
 import cors from 'cors';
 
+const fs = require('fs');
+
+// JSON-Datei laden (achte auf den korrekten Pfad)
+const rawData = fs.readFileSync('./tree.json'); // Passe den Pfad ggf. an
+const treeData = JSON.parse(rawData); 
+
+class DecisionTree {
+  constructor(treeData) {
+    this.tree = treeData.tree; // Wurzelknoten
+    this.nodes = treeData.nodes; // Alle anderen Knoten
+    this.currentNode = this.tree; // Startknoten
+  }
+
+  getCurrentNode() {
+    return this.currentNode;
+  }
+
+  getNextNode(optionIndex) {
+    const nextNodeId = this.currentNode.options[optionIndex].next;
+    this.currentNode = this.nodes[nextNodeId];
+    return this.currentNode;
+  }
+}
+
+const tree = new DecisionTree(treeData);
 
 const app = express();
 app.use(cors()); // CORS aktivieren
